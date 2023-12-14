@@ -17,16 +17,43 @@ def get_stellar_data(num_stars):
     return stellar_masses, luminosities, metallicities
 
 def get_galactic_coordinates(model_type, num_stars):
-    # Choose galactic distribution model (e.g., Milky Way Disk)
-    if model_type == 'Disk':
-        x, y, z = ... # Implement chosen model logic to generate realistic galactic coordinates
-    return x, y, z
+    if model_type == 'ExponentialDisk':
+        # Define parameters for the exponential disk model
+        scale_length = 50 # Typical scale length for the Milky Way disk
+        z_scale = 10 # Characteristic height of the disk
+
+        # Generate random radii and heights
+        r = np.random.exponential(scale_length, num_stars)
+        z = np.random.normal(0, z_scale, num_stars)
+
+        # Calculate azimuthal angles based on random radii
+        theta = np.random.uniform(0, 2 * np.pi, num_stars)
+
+        # Convert to Cartesian coordinates
+        x = r * np.cos(theta)
+        y = r * np.sin(theta)
+
+        return x, y, z
+
 
 def generate_technosignature_types(stellar_masses, metallicities):
-    # Model different technosignatures based on stellar and civilization factors
-    # Consider factors like energy output, resource availability, and technological level
-    ... # Implement your logic for assigning technosignature types
+    # Define probabilities for different technosignature types based on stellar and civilization factors
+    waste_heat_prob = 0.5 * (stellar_masses / np.mean(stellar_masses))
+    artificial_light_prob = 0.2 * (metallicities / np.mean(metallicities))
+    megastructure_prob = 0.1 * np.random.uniform(0, 1, len(stellar_masses))
+
+    # Randomly assign technosignature types based on calculated probabilities
+    technosignature_types = []
+    for waste_heat, artificial_light, megastructure in zip(waste_heat_prob, artificial_light_prob, megastructure_prob):
+        if np.random.random() < waste_heat:
+            technosignature_types.append('WasteHeat')
+        elif np.random.random() < waste_heat + artificial_light:
+            technosignature_types.append('ArtificialLight')
+        else:
+            technosignature_types.append('None')
+
     return technosignature_types
+
 
 def simulate_technosignature_detectability(technosignature_types):
     # Model detectability based on technosignature type and assumed technology levels
